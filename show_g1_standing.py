@@ -1,13 +1,10 @@
-from pathlib import Path
 import mujoco
 import mujoco.viewer
 import time
 
-model_path = Path(r"F:\Unitree\unitree_mujoco\unitree_robots\g1\scene_23dof.xml")
+from unitree_paths import load_g1_model
 
-print("Loading:", model_path)
-
-model = mujoco.MjModel.from_xml_path(str(model_path))
+model = load_g1_model()
 data = mujoco.MjData(model)
 
 # Vypnutí gravitace jen pro prohlížení modelu

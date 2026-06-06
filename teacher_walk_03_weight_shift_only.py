@@ -1,30 +1,10 @@
 import time
 import math
-from pathlib import Path
 
 import mujoco
 import mujoco.viewer
 
-
-def find_unitree_root():
-    possible_roots = [
-        Path(r"F:\Unitree"),
-        Path(r"U:\Unitree"),
-        Path(r"D:\Unitree"),
-        Path(r"E:\Unitree"),
-    ]
-
-    for root in possible_roots:
-        xml = root / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
-        if xml.exists():
-            print(f"Používám složku Unitree: {root}")
-            return root
-
-    raise FileNotFoundError("Nenalezena složka Unitree.")
-
-
-UNITREE_ROOT = find_unitree_root()
-XML_PATH = UNITREE_ROOT / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
+from unitree_paths import load_g1_model
 
 BASE_Z = 0.78
 
@@ -141,12 +121,7 @@ def apply_weight_shift_only(model, data, t):
     set_joint(model, data, "right_elbow_joint", 0.30)
 
 def main():
-    print(f"Loading: {XML_PATH}")
-
-    if not XML_PATH.exists():
-        raise FileNotFoundError(f"Soubor modelu nenalezen: {XML_PATH}")
-
-    model = mujoco.MjModel.from_xml_path(str(XML_PATH))
+    model = load_g1_model()
     data = mujoco.MjData(model)
 
     print("Model loaded OK")
