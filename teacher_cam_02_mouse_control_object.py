@@ -1,31 +1,11 @@
 import time
-from pathlib import Path
 
 import cv2
 import numpy as np
 import mujoco
 import mujoco.viewer
 
-
-def find_unitree_root():
-    possible_roots = [
-        Path(r"F:\Unitree"),  # doma
-        Path(r"U:\Unitree"),  # práce
-        Path(r"D:\Unitree"),
-        Path(r"E:\Unitree"),
-    ]
-
-    for root in possible_roots:
-        xml = root / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
-        if xml.exists():
-            print(f"Používám složku Unitree: {root}")
-            return root
-
-    raise FileNotFoundError("Nenalezena složka Unitree.")
-
-
-UNITREE_ROOT = find_unitree_root()
-XML_PATH = UNITREE_ROOT / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
+from unitree_paths import load_g1_model
 
 WIDTH = 640
 HEIGHT = 480
@@ -172,12 +152,7 @@ def clamp(value, min_value, max_value):
 
 
 def main():
-    print(f"Loading: {XML_PATH}")
-
-    if not XML_PATH.exists():
-        raise FileNotFoundError(f"Soubor modelu nenalezen: {XML_PATH}")
-
-    model = mujoco.MjModel.from_xml_path(str(XML_PATH))
+    model = load_g1_model()
     data = mujoco.MjData(model)
 
     print("Model loaded OK")

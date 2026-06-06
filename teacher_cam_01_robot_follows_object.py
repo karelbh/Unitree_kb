@@ -1,15 +1,12 @@
 import time
 import math
-from pathlib import Path
 
 import cv2
 import numpy as np
 import mujoco
 import mujoco.viewer
 
-
-UNITREE_ROOT = Path(r"U:\Unitree")
-XML_PATH = UNITREE_ROOT / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
+from unitree_paths import load_g1_model
 
 WIDTH = 640
 HEIGHT = 480
@@ -132,9 +129,7 @@ def detect_red_object(frame):
 
 
 def main():
-    print(f"Loading: {XML_PATH}")
-
-    model = mujoco.MjModel.from_xml_path(str(XML_PATH))
+    model = load_g1_model()
     data = mujoco.MjData(model)
 
     print("Model loaded OK")

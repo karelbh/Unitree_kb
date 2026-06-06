@@ -1,11 +1,12 @@
-from pathlib import Path
 import time
 import numpy as np
 import mujoco
 import mujoco.viewer
 
+from unitree_paths import load_g1_model
 
-MODEL_PATH = Path(r"F:\Unitree\unitree_mujoco\unitree_robots\g1\scene_23dof.xml")
+model = load_g1_model()
+data = mujoco.MjData(model)
 
 # U tvého modelu se klouby jmenují s příponou _joint
 LEFT_ARM_JOINTS = {

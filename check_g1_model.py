@@ -1,14 +1,8 @@
-from pathlib import Path
 import mujoco
 
-model_path = Path(r"F:\Unitree\unitree_mujoco\unitree_robots\g1\scene_23dof.xml")
+from unitree_paths import load_g1_model
 
-print("Loading:", model_path)
-
-if not model_path.exists():
-    raise FileNotFoundError(model_path)
-
-model = mujoco.MjModel.from_xml_path(str(model_path))
+model = load_g1_model()
 data = mujoco.MjData(model)
 
 print("Model loaded OK")
