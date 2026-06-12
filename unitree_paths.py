@@ -1,48 +1,74 @@
-"""Utility functions for finding and loading Unitree models."""
-
 from pathlib import Path
 import mujoco
 
 
-def find_unitree_root() -> Path:
+def find_project_root() -> Path:
     """
-    Dynamically find the Unitree installation directory.
-    
-    Checks multiple possible locations and returns the first one that exists.
-    
-    Returns:
-        Path to Unitree root directory
-        
-    Raises:
-        FileNotFoundError: If Unitree directory cannot be found
+    Najde kořen aktuálního GitHub projektu Unitree_kb.
+    Hlavní pracovní adresář:
+    D:\\work\\tata\\projekty\\Unitree_kb
     """
+
+    project_root = Path(__file__).resolve().parent
+
+    model_path = (
+        project_root
+        / "unitree_mujoco"
+        / "unitree_robots"
+        / "g1"
+        / "scene_23dof.xml"
+    )
+
+    if model_path.exists():
+        return project_root
+
     possible_roots = [
+        Path(r"D:\work\tata\projekty\Unitree_kb"),
         Path(r"D:\Unitree"),
         Path(r"E:\Unitree"),
         Path(r"F:\Unitree"),
         Path(r"U:\Unitree"),
     ]
-    
+
     for root in possible_roots:
-        xml = root / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
-        if xml.exists():
-            print(f"Found Unitree directory: {root}")
+        candidate = (
+            root
+            / "unitree_mujoco"
+            / "unitree_robots"
+            / "g1"
+            / "scene_23dof.xml"
+        )
+        if candidate.exists():
             return root
-    
-    raise FileNotFoundError("Unitree directory not found. Checked: " + ", ".join(str(r) for r in possible_roots))
+
+    checked = [model_path]
+    for root in possible_roots:
+        checked.append(
+            root
+            / "unitree_mujoco"
+            / "unitree_robots"
+            / "g1"
+            / "scene_23dof.xml"
+        )
+
+    raise FileNotFoundError(
+        "Unitree model not found. Checked:\n"
+        + "\n".join(str(p) for p in checked)
+    )
 
 
-def load_g1_model() -> mujoco.MjModel:
-    """
-    Load the G1 robot model from scene_23dof.xml.
-    
-    Returns:
-        Loaded MuJoCo model
-    """
-    unitree_root = find_unitree_root()
-    model_path = unitree_root / "unitree_mujoco" / "unitree_robots" / "g1" / "scene_23dof.xml"
-    
-    print(f"Loading model: {model_path}")
-    model = mujoco.MjModel.from_xml_path(str(model_path))
-    
-    return model
+def get_g1_model_path() -> Path:
+    root = find_project_root()
+    return (
+        root
+        / "unitree_mujoco"
+        / "unitree_robots"
+        / "g1"
+        / "scene_23dof.xml"
+    )
+
+
+def load_g1_model():
+    model_path = get_g1_model_path()
+    print("Loading model:", model_path)
+    return mujoco.MjModel.from_xml_path(str(model_path))
